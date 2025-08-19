@@ -1,0 +1,17 @@
+{
+  "name": "cypress_naukri_dailyprofileupdate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "UpdateNaukriProfile": "npx cypress run --spec \"cypress/e2e/UpdateNaukriProfile.cy.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@4tw/cypress-drag-drop": "^2.3.0",
+    "cypress": "^14.5.4",
+    "cypress-file-upload": "^5.0.8"
+  }
+}
