@@ -33,7 +33,7 @@ Please use this script responsibly, review Naukri’s user agreements, and proce
 1. **Clone this repo**  
    ```bash
    git clone https://github.com/your-username/naukri-auto-update.git
-   cd naukri-auto-update
+   
 2. **Install Cypress**
  ```bash
 npm install cypress --save-dev
