@@ -22,6 +22,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify secrets are set
+        run: |
+          echo "Username length: ${#NAUKRI_USERNAME}"
+          echo "Password length: ${#NAUKRI_PASSWORD}"
+          if [ -z "$NAUKRI_USERNAME" ]; then echo "WARNING: NAUKRI_USERNAME is empty!"; fi
+          if [ -z "$NAUKRI_PASSWORD" ]; then echo "WARNING: NAUKRI_PASSWORD is empty!"; fi
+        env:
+          NAUKRI_USERNAME: ${{ secrets.NAUKRI_USERNAME }}
+          NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
+
       - name: Run Cypress Naukri Update
         uses: cypress-io/github-action@v6
         with:
