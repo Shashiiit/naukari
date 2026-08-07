@@ -14,10 +14,10 @@ describe('Update Naukri Profile', () => {
     cy.get('.form > :nth-child(2) > input').type(username)
     cy.get(':nth-child(3) > input').type(password)
     cy.get(':nth-child(6) > .btn-primary').click()
-    cy.wait(2000)
+    cy.wait(5000)
     cy.visit('https://www.naukri.com/mnjuser/profile')
-    cy.wait(2000)
-    cy.get('#attachCV')
+    cy.wait(5000)
+    cy.get('#attachCV', { timeout: 15000 })
       .attachFile("Shashidhar_AgenticAI_Final.docx")
       .then(() => {
         cy.get('.cnt > .head').should('be.visible')
