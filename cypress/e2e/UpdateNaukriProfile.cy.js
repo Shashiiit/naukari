@@ -18,7 +18,7 @@ describe('Update Naukri Profile', () => {
     cy.visit('https://www.naukri.com/mnjuser/profile')
     cy.wait(2000)
     cy.get('#attachCV')
-      .attachFile("Shashidhar_AgenticAI_Final.docx"))
+      .attachFile("Shashidhar_AgenticAI_Final.docx")
       .then(() => {
         cy.get('.cnt > .head').should('be.visible')
       })
