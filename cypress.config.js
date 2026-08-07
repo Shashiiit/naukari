@@ -7,7 +7,10 @@ module.exports = defineConfig({
   defaultCommandTimeout: 6000,
   e2e: {
     setupNodeEvents(on, config) {
-      // implement node event listeners here
+      // Pass environment variables to Cypress (used by GitHub Actions)
+      config.env.NAUKRI_USERNAME = process.env.NAUKRI_USERNAME || '';
+      config.env.NAUKRI_PASSWORD = process.env.NAUKRI_PASSWORD || '';
+      return config;
     },
   },
 });

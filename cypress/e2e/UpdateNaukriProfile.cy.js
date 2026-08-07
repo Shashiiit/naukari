@@ -6,8 +6,9 @@ describe('Update Naukri Profile', () => {
     });
   })
   it('should update the profile successfully', function () {
-    const username = this.data.username
-    const password = this.data.password
+    // Use GitHub Secrets (env vars) if available, otherwise fall back to fixture file
+    const username = Cypress.env('NAUKRI_USERNAME') || this.data.username
+    const password = Cypress.env('NAUKRI_PASSWORD') || this.data.password
     cy.visit('https://naukri.com')
     cy.get('#login_Layer').click()
     cy.get('.form > :nth-child(2) > input').type(username)

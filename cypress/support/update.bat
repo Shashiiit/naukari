@@ -1,4 +1,3 @@
 @echo off
-cd /d "F:\Automation Projects\Cypress_Naukri_DailyProfileUpdate"
+cd /d "C:\Users\Shashi1\Desktop\Cypress_Naukri_DailyProfileUpdate"
 npm run UpdateNaukriProfile
-pause
