@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "UpdateNaukriProfile": "npx cypress run --spec \"cypress/e2e/UpdateNaukriProfile.cy.js\""
+    "UpdateNaukriProfile": "npx cypress run --headed --spec \"cypress/e2e/UpdateNaukriProfile.cy.js\""
   },
   "keywords": [],
   "author": "",

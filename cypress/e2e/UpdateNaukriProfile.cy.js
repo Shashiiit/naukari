@@ -9,12 +9,22 @@ describe('Update Naukri Profile', () => {
     // Use GitHub Secrets (env vars) if available, otherwise fall back to fixture file
     const username = Cypress.env('NAUKRI_USERNAME') || this.data.username
     const password = Cypress.env('NAUKRI_PASSWORD') || this.data.password
-    cy.visit('https://naukri.com')
-    cy.get('#login_Layer').click()
-    cy.get('.form > :nth-child(2) > input').type(username)
-    cy.get(':nth-child(3) > input').type(password)
-    cy.get(':nth-child(6) > .btn-primary').click()
+    
+    // Go directly to login page
+    cy.visit('https://www.naukri.com/nlogin/login')
     cy.wait(5000)
+    
+    // Fill login form
+    cy.get('input[placeholder*="Email"], input[placeholder*="email"], input[placeholder*="Username"]')
+      .first().clear().type(username)
+    cy.get('input[type="password"]').first().clear().type(password)
+    cy.wait(1000)
+    
+    // Click the Login button
+    cy.contains('button', 'Login').click()
+    cy.wait(8000)
+    
+    // Navigate to profile
     cy.visit('https://www.naukri.com/mnjuser/profile')
     cy.wait(5000)
     cy.get('#attachCV', { timeout: 15000 })
