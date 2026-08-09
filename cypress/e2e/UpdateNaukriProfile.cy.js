@@ -20,18 +20,26 @@ describe('Update Naukri Profile', () => {
     cy.get('input[type="password"]').first().clear().type(password)
     cy.wait(1000)
     
-    // Click the Login button
+    // Click the Login button and verify login succeeded
     cy.contains('button', 'Login').click()
-    cy.wait(8000)
+    cy.location('pathname', { timeout: 30000 }).should('not.include', 'login')
     
     // Navigate to profile
     cy.visit('https://www.naukri.com/mnjuser/profile')
     cy.wait(5000)
-    cy.get('#attachCV', { timeout: 15000 })
-      .attachFile("Shashidhar_AgenticAI_Final.docx")
-      .then(() => {
-        cy.get('.cnt > .head').should('be.visible')
-      })
+
+    const resumeFile = 'Shashidhar_AgenticAI_Final.docx'
+
+    cy.get('body', { timeout: 20000 }).then(($body) => {
+      if ($body.find('#attachCV').length) {
+        cy.get('#attachCV', { timeout: 15000 }).attachFile(resumeFile)
+      } else {
+        cy.get('input[type="file"]', { timeout: 15000 }).first().attachFile(resumeFile)
+      }
+    })
+    .then(() => {
+      cy.get('.cnt > .head', { timeout: 15000 }).should('be.visible')
+    })
   })
 })
 /**
