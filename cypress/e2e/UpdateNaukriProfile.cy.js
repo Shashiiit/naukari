@@ -31,12 +31,29 @@ describe('Update Naukri Profile', () => {
     cy.wait(5000)
 
     const resumeFile = 'Shashidhar_AgenticAI_Final.docx'
+    const uploadInputSelectors = [
+      '#attachCV',
+      'input[type="file"]',
+      'input[name*="resume"]',
+      'input[id*="resume"]',
+      'input[name*="cv"]',
+      'input[id*="cv"]',
+    ].join(',')
 
-    cy.get('body', { timeout: 20000 }).then(($body) => {
-      if ($body.find('#attachCV').length) {
-        cy.get('#attachCV', { timeout: 15000 }).attachFile(resumeFile)
+    cy.wait(5000)
+    cy.screenshot('profile-page-before-upload')
+
+    cy.get('body', { timeout: 60000 }).then(($body) => {
+      if ($body.find(uploadInputSelectors).length) {
+        cy.get(uploadInputSelectors, { timeout: 60000 })
+          .first()
+          .attachFile(resumeFile, { force: true })
       } else {
-        cy.get('input[type="file"]', { timeout: 15000 }).first().attachFile(resumeFile)
+        cy.contains(/upload.*(resume|cv)|attach.*(resume|cv)|browse/i, { timeout: 60000 })
+          .click({ force: true })
+        cy.get(uploadInputSelectors, { timeout: 60000 })
+          .first()
+          .attachFile(resumeFile, { force: true })
       }
     })
     .then(() => {
