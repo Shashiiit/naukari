@@ -1,3 +1,5 @@
+import 'cypress-file-upload';
+
 describe('Update Naukri Profile', () => {
   before(function () {
     //runs once before all tests in this block
@@ -35,57 +37,45 @@ describe('Update Naukri Profile', () => {
     cy.wait(5000)
     cy.screenshot('profile-page-before-upload')
 
-    // Strategy 1: Try direct file input attachment first
-    cy.get('input[type="file"]', { timeout: 60000 }).then(($fileInputs) => {
+    // Robust file upload strategy: try direct file input, otherwise find an upload trigger and retry
+    cy.get('body', { timeout: 60000 }).then(($body) => {
+      // First, check for any file input present in the page
+      const $fileInputs = $body.find('input[type="file"]')
+
       if ($fileInputs.length > 0) {
-        cy.wrap($fileInputs.first())
-          .attachFile(resumeFile, { force: true })
-          .then(() => {
-            cy.log('✓ File attached successfully via direct input')
-          })
+        // Attach directly to the first file input
+        cy.wrap($fileInputs.first()).attachFile(resumeFile, { force: true })
+        cy.log('✓ File attached successfully via direct input')
       } else {
-        cy.log('No direct file input found, trying alternative approach')
-        throw new Error('Need alternative approach')
+        cy.log('No direct file input found, searching for upload trigger...')
+
+        // Look for elements that look like upload triggers and match their visible text
+        const uploadCandidates = $body.find('button, a, label, [role="button"], input[type="button"], input[type="submit"], [class*="upload"], [class*="attach"]')
+
+        // Filter candidates by their visible text matching common upload words
+        const trigger = Array.from(uploadCandidates).find((el) => {
+          const text = (el.innerText || el.value || '')
+          return /upload|attach|browse|choose file|select file/i.test(text)
+        })
+
+        if (trigger) {
+          cy.wrap(trigger).click({ force: true })
+          cy.log('✓ Clicked upload trigger')
+
+          // After clicking the trigger, wait briefly and try to find the file input again
+          cy.wait(1000)
+          cy.get('input[type="file"]', { timeout: 60000 }).then(($after) => {
+            if ($after.length > 0) {
+              cy.wrap($after.first()).attachFile(resumeFile, { force: true })
+              cy.log('✓ File attached successfully after clicking upload trigger')
+            } else {
+              throw new Error('Upload trigger clicked but no file input appeared')
+            }
+          })
+        } else {
+          throw new Error('Could not find file input or upload trigger on the profile page')
+        }
       }
-    }).catch(() => {
-      // Strategy 2: Look for upload button and click it
-      cy.get('body').then(($body) => {
-        // Try multiple button/link selectors
-        const uploadButtonSelectors = [
-          'button:contains("Upload")',
-          'button:contains("Attach")',
-          'button:contains("Browse")',
-          'label:contains("Upload")',
-          'label:contains("Attach")',
-          '[role="button"]:contains("Upload")',
-          'a:contains("Upload")',
-          'a:contains("Attach")',
-          '.upload-button',
-          '.attach-button',
-          '[class*="upload"]',
-          '[class*="attach"]'
-        ]
-        
-        let found = false
-        for (let selector of uploadButtonSelectors) {
-          if ($body.find(selector).length > 0) {
-            cy.get(selector).first().click({ force: true })
-            cy.log(`✓ Clicked upload button: ${selector}`)
-            found = true
-            break
-          }
-        }
-        
-        if (!found) {
-          cy.log('Could not find upload button, will try direct file input as fallback')
-        }
-      })
-      
-      cy.wait(2000)
-      
-      // Try to find and attach file
-      cy.get('input[type="file"]', { timeout: 60000 })
-        .attachFile(resumeFile, { force: true })
     })
 
     // Wait for upload completion
@@ -97,6 +87,6 @@ describe('Update Naukri Profile', () => {
 /**
  * To upload a file in Cypress, use the 'cypress-file-upload' plugin.
  * 1. Install it: npm install --save-dev cypress-file-upload
- * 2. Add `import 'cypress-file-upload';` to your support/e2e.js or at the top of your test file.
+ * 2. Add `import 'cypress-file-upload';` to your support/e2e.js or at the top of your test file (done above).
  * 3. Use `.attachFile()` on the file input element.
  */
