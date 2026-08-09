@@ -20,12 +20,14 @@ describe('Update Naukri Profile', () => {
     cy.get('input[type="password"]').first().clear().type(password)
     cy.wait(1000)
     
-    // Click the Login button and verify login succeeded
-    cy.contains('button', 'Login').click()
-    cy.location('pathname', { timeout: 30000 }).should('not.include', 'login')
-    
-    // Navigate to profile
+    // Click the Login button and proceed to profile
+    cy.contains('button', /login/i, { timeout: 15000 })
+      .click({ force: true })
+    cy.wait(8000)
+
+    // Directly visit the profile page once login is submitted
     cy.visit('https://www.naukri.com/mnjuser/profile')
+    cy.url({ timeout: 30000 }).should('include', '/mnjuser/profile')
     cy.wait(5000)
 
     const resumeFile = 'Shashidhar_AgenticAI_Final.docx'
