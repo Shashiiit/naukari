@@ -14,7 +14,7 @@ describe('Update Naukri Profile', () => {
     const username = Cypress.env('NAUKRI_USERNAME') || this.data?.username;
     const password = Cypress.env('NAUKRI_PASSWORD') || this.data?.password;
 
-    // Read both env names (workflow sets both) and log them
+    // Debug early to confirm the env inside Cypress
     cy.log('DEBUG: Cypress.env(FORCE_FALLBACK) = ' + JSON.stringify(Cypress.env('FORCE_FALLBACK')));
     cy.log('DEBUG: Cypress.env(CYPRESS_FORCE_FALLBACK) = ' + JSON.stringify(Cypress.env('CYPRESS_FORCE_FALLBACK')));
 
@@ -22,7 +22,6 @@ describe('Update Naukri Profile', () => {
       (Cypress.env('FORCE_FALLBACK') === 'true' || Cypress.env('FORCE_FALLBACK') === true) ||
       (Cypress.env('CYPRESS_FORCE_FALLBACK') === 'true' || Cypress.env('CYPRESS_FORCE_FALLBACK') === true);
 
-    // Inline fallback HTML (full simple page)
     const fallbackHtml = `
       <!doctype html>
       <html>
