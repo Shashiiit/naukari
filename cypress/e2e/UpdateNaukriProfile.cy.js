@@ -37,19 +37,22 @@ describe('Update Naukri Profile', () => {
       </html>
     `;
 
-    function loadInlineFallbackViaDataUrl() {
-      const fallbackDataUrl = `data:text/html;charset=utf-8,${encodeURIComponent(fallbackHtml)}`;
-      // Visiting the data: URL guarantees no external network call
-      cy.visit(fallbackDataUrl);
-      cy.log('Inline fallback page loaded via data: URL');
-      // Capture a screenshot so you can verify what loaded in CI
+    function loadInlineFallbackViaAboutBlank() {
+      // Visit about:blank and write our HTML into the document. This avoids data: protocol issues.
+      cy.visit('about:blank');
+      cy.document().then((doc) => {
+        doc.open();
+        doc.write(fallbackHtml);
+        doc.close();
+      });
+      cy.log('Inline fallback page loaded via about:blank + document.write');
       cy.screenshot('fallback-loaded');
     }
 
     // If forced, use the inline fallback immediately (no cy.request / external cy.visit)
     if (forceFallback) {
       cy.log('FORCE_FALLBACK is true — loading inline fallback');
-      loadInlineFallbackViaDataUrl();
+      loadInlineFallbackViaAboutBlank();
     } else {
       // Not forced: attempt to reach live site, but still fall back if unreachable
       cy.request({ url: loginUrl, failOnStatusCode: false, timeout: 20000 })
@@ -59,7 +62,7 @@ describe('Update Naukri Profile', () => {
             cy.visit(loginUrl);
           } else {
             cy.log('Live site not reachable or returned non-HTML. Falling back to inline upload test page');
-            loadInlineFallbackViaDataUrl();
+            loadInlineFallbackViaAboutBlank();
           }
         });
     }
