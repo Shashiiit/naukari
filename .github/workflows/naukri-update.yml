@@ -4,7 +4,7 @@ on:
   schedule:
     # 8:00 AM IST = 2:30 AM UTC (IST is UTC+5:30)
     - cron: '30 2 * * *'
-  workflow_dispatch:
+  workflow_dispatch: # Allows manual trigger from GitHub UI
 
 jobs:
   update-profile:
@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
 
       - name: Install dependencies
         run: npm ci
@@ -32,14 +32,6 @@ jobs:
           NAUKRI_USERNAME: ${{ secrets.NAUKRI_USERNAME }}
           NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
 
-      - name: Debug: print FORCE_FALLBACK env
-        run: |
-          echo "FORCE_FALLBACK='$FORCE_FALLBACK'"
-          echo "CYPRESS_FORCE_FALLBACK='$CYPRESS_FORCE_FALLBACK'"
-        env:
-          FORCE_FALLBACK: "true"
-          CYPRESS_FORCE_FALLBACK: "true"
-
       - name: Run Cypress Naukri Update
         uses: cypress-io/github-action@v6
         with:
@@ -47,5 +39,3 @@ jobs:
         env:
           NAUKRI_USERNAME: ${{ secrets.NAUKRI_USERNAME }}
           NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
-          FORCE_FALLBACK: "true"
-          CYPRESS_FORCE_FALLBACK: "true"
