@@ -1,5 +1,3 @@
-import 'cypress-file-upload';
-
 describe('Update Naukri Profile', () => {
   before(function () {
     //runs once before all tests in this block
@@ -87,6 +85,6 @@ describe('Update Naukri Profile', () => {
 /**
  * To upload a file in Cypress, use the 'cypress-file-upload' plugin.
  * 1. Install it: npm install --save-dev cypress-file-upload
- * 2. Add `import 'cypress-file-upload';` to your support/e2e.js or at the top of your test file (done above).
+ * 2. For a global import, add `import 'cypress-file-upload';` to cypress/support/e2e.js (already present in this repo).
  * 3. Use `.attachFile()` on the file input element.
  */
