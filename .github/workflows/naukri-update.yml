@@ -39,3 +39,4 @@ jobs:
         env:
           NAUKRI_USERNAME: ${{ secrets.NAUKRI_USERNAME }}
           NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
+          FORCE_FALLBACK: 'true'
