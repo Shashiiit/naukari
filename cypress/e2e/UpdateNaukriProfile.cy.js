@@ -38,14 +38,16 @@ describe('Update Naukri Profile', () => {
     `;
 
     function loadInlineFallbackViaAboutBlank() {
-      // Visit about:blank and write our HTML into the document. This avoids data: protocol issues.
-      cy.visit('about:blank');
-      cy.document().then((doc) => {
-        doc.open();
-        doc.write(fallbackHtml);
-        doc.close();
+      // NOTE: cy.visit('about:blank') is not allowed by Cypress (it only allows
+      // http/https/file protocols) and throws "Invalid protocol: about:".
+      // The AUT iframe already starts at about:blank before any visit, so we
+      // can write our HTML straight into it via cy.window() without visiting.
+      cy.window().then((win) => {
+        win.document.open();
+        win.document.write(fallbackHtml);
+        win.document.close();
       });
-      cy.log('Inline fallback page loaded via about:blank + document.write');
+      cy.log('Inline fallback page loaded via document.write (no visit needed)');
       cy.screenshot('fallback-loaded');
     }
 
