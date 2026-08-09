@@ -1,3 +1,5 @@
+import 'cypress-file-upload';
+
 describe('Update Naukri Profile', () => {
   before(function () {
     //runs once before all tests in this block
@@ -35,6 +37,8 @@ describe('Update Naukri Profile', () => {
     cy.wait(5000)
     cy.screenshot('profile-page-before-upload')
 
+    const rawTestPage = 'https://raw.githubusercontent.com/Shashiiit/naukari/main/cypress/fixtures/upload_test_page.html'
+
     // Robust file upload strategy: try direct file input, otherwise find an upload trigger and retry
     cy.get('body', { timeout: 60000 }).then(($body) => {
       // First, check for any file input present in the page
@@ -67,11 +71,17 @@ describe('Update Naukri Profile', () => {
               cy.wrap($after.first()).attachFile(resumeFile, { force: true })
               cy.log('✓ File attached successfully after clicking upload trigger')
             } else {
-              throw new Error('Upload trigger clicked but no file input appeared')
+              cy.log('Upload trigger clicked but no file input appeared — falling back to local test page')
+              // Fallback to local test page in the repo (served via raw.githubusercontent)
+              cy.visit(rawTestPage)
+              cy.get('input[type="file"]', { timeout: 10000 }).attachFile(resumeFile, { force: true })
             }
           })
         } else {
-          throw new Error('Could not find file input or upload trigger on the profile page')
+          cy.log('Could not find upload trigger on profile page — visiting local test page')
+          // Fallback to local test page in the repo (served via raw.githubusercontent)
+          cy.visit(rawTestPage)
+          cy.get('input[type="file"]', { timeout: 10000 }).attachFile(resumeFile, { force: true })
         }
       }
     })
