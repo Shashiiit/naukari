@@ -32,6 +32,14 @@ jobs:
           NAUKRI_USERNAME: ${{ secrets.NAUKRI_USERNAME }}
           NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
 
+      - name: Debug: print FORCE_FALLBACK env
+        run: |
+          echo "FORCE_FALLBACK='$FORCE_FALLBACK'"
+          echo "CYPRESS_FORCE_FALLBACK='$CYPRESS_FORCE_FALLBACK'"
+        env:
+          FORCE_FALLBACK: 'true'
+          CYPRESS_FORCE_FALLBACK: 'true'
+
       - name: Run Cypress Naukri Update
         uses: cypress-io/github-action@v6
         with:
@@ -40,3 +48,4 @@ jobs:
           NAUKRI_USERNAME: ${{ secrets.NAUKRI_USERNAME }}
           NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
           FORCE_FALLBACK: 'true'
+          CYPRESS_FORCE_FALLBACK: 'true'
