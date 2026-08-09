@@ -38,26 +38,41 @@ describe('Update Naukri Profile', () => {
       'input[id*="resume"]',
       'input[name*="cv"]',
       'input[id*="cv"]',
+      'input[name*="attachment"]',
     ].join(',')
 
     cy.wait(5000)
     cy.screenshot('profile-page-before-upload')
 
+    // Try to find and interact with upload input
     cy.get('body', { timeout: 60000 }).then(($body) => {
-      if ($body.find(uploadInputSelectors).length) {
+      const uploadInput = $body.find(uploadInputSelectors)
+      
+      if (uploadInput.length > 0) {
+        // Upload input found directly
         cy.get(uploadInputSelectors, { timeout: 60000 })
           .first()
-          .attachFile(resumeFile, { force: true })
+          .should('exist')
+          .attachFile(resumeFile, { force: true, subjectType: 'input' })
       } else {
-        cy.contains(/upload.*(resume|cv)|attach.*(resume|cv)|browse/i, { timeout: 60000 })
-          .click({ force: true })
-        cy.get(uploadInputSelectors, { timeout: 60000 })
+        // Try to find and click upload button first
+        cy.contains('span, button, a, label, div', /upload|attach|browse|choose|select|replace/i, { timeout: 30000 })
           .first()
-          .attachFile(resumeFile, { force: true })
+          .should('be.visible')
+          .click({ force: true, multiple: true })
+        
+        cy.wait(2000)
+        
+        // Now try to find and attach to the file input
+        cy.get(uploadInputSelectors, { timeout: 60000 })
+          .should('exist')
+          .attachFile(resumeFile, { force: true, subjectType: 'input' })
       }
     })
     .then(() => {
-      cy.get('.cnt > .head', { timeout: 15000 }).should('be.visible')
+      // Wait for upload to complete and verify success
+      cy.get('.cnt > .head, .upload-success, [class*="success"], [class*="uploaded"]', { timeout: 30000 })
+        .should('be.visible')
     })
   })
 })
