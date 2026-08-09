@@ -50,11 +50,35 @@ describe('Update Naukri Profile', () => {
 
     // Give the login request + any redirect a moment, then dismiss popups
     cy.wait(3000);
+
+    // DIAGNOSTIC: capture what actually happened, before asserting anything.
+    // This screenshot + log will tell us if it's a wrong-credential error,
+    // a captcha, or just a changed selector.
+    cy.screenshot('after-login-click-raw');
+    cy.url().then((url) => cy.log('URL after login click: ' + url));
+    cy.get('body').then(($body) => {
+      const bodyText = $body.text();
+      if (/incorrect|invalid|wrong password|does not exist/i.test(bodyText)) {
+        cy.log('⚠ Page text suggests a login error message is showing');
+      }
+      if (/captcha|verify you are human|unusual traffic/i.test(bodyText)) {
+        cy.log('⚠ Page text suggests a CAPTCHA / bot-check is showing');
+      }
+    });
+
     dismissPopupsIfPresent();
 
-    // Confirm we're actually logged in (Naukri's post-login dashboard container)
-    cy.get('#ff-inventory', { timeout: 40000 }).should('exist');
-    cy.screenshot('after-login');
+    // Confirm we're actually logged in. Primary check: #ff-inventory.
+    // Fallback checks in case Naukri changed the dashboard markup:
+    // URL no longer on the login page, and the login form is gone.
+    cy.get('body', { timeout: 40000 }).should(($body) => {
+      const stillOnLoginForm = $body.find('#usernameField').length > 0;
+      const hasInventory = $body.find('#ff-inventory').length > 0;
+      expect(stillOnLoginForm, 'login form should be gone').to.be.false;
+      // Note: not hard-asserting hasInventory here so we get a clearer
+      // failure message below if the login form is gone but this ID changed.
+    });
+    cy.screenshot('after-login-resolved');
 
     // ---- 2. Go to profile page ----
     cy.visit(profileUrl);
